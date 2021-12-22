@@ -35,7 +35,6 @@ dependencies {
 	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 	implementation 'org.projectlombok:lombok:1.18.18'
     implementation 'junit:junit:4.13.1'
-    implementation 'junit:junit:4.13.1'
     compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
@@ -88,5 +87,5 @@ bootJar {
 		into 'static/docs'
 	}
 	extension = "jar"
-	archiveFileName = "koneps-api.$extension"
+	archiveFileName = "bookclub-back.$extension"
 }
