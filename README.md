@@ -1,6 +1,6 @@
 # 우리동네 북클럽 API
 "우리동네 북클럽" 웹서비스를 위한 API 서버입니다.  
-Frontend는 https://github.com/konsent/bookclub-front 를 참고해주세요!
+Frontend는 https://github.com/bookclubstory/bookclub-front 를 참고해주세요!
 
 ## 기능
 - 메인 페이지 : 통합검색, 이달의 인기 도서, 추천 모임
@@ -36,5 +36,3 @@ DDD을 참고하여 도메인 단위로 sub-package를 구성합니다.
 - 권용희 : 기획 & 개발 @[konsent](https://github.com/konsent)
 - 손소라 : 개발 @[ssr03](https://github.com/ssr03)
 - 윤종현 : PM & 개발 @[kindvictor](https://github.com/kindvictor)
-
-test pull request
