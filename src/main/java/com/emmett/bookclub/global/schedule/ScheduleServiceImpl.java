@@ -1,6 +1,5 @@
 package com.emmett.bookclub.global.schedule;
 
-import com.emmett.bookclub.domain.data.openapi.OpenapiService;
 import com.emmett.bookclub.global.mail.MailService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -8,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 
 import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
@@ -20,8 +18,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final MailService mailService;
     private final Environment environment;
-
-    private final OpenapiService openapiService;
 
     @Override
     public void runNoticeMailing() {
@@ -94,16 +90,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                 logger.info(">> EMP_NO : " + empNo + " / UN HANDLED CARD usage -> " + cntDto.get().getCol1());
             }
         }*/
-    }
-
-    @Override
-    public void getBeforeSpecification() throws IOException {
-        openapiService.callApiForBeforeSpecification("", "");
-    }
-
-    @Override
-    public void getBidNotice() throws IOException {
-        openapiService.callApiForBidNotice("", "");
     }
 
 }

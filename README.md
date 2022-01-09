@@ -21,9 +21,10 @@ DDD을 참고하여 도메인 단위로 sub-package를 구성합니다.
 - /src/docs : api documents
 - /src/main : 메인 패키지
 - /src/main/java : 프로젝트 소스
+- /src/main/java/.../domain : 도메인 패키지 (비즈니스 로직 구현)
+- /src/main/java/.../domain/model : 도메인 엔티티 객체들이 공통적으로 사용할 객체들 (Enum, Embeddable)
+- /src/main/java/.../global : 공통 기능 구현
 - /src/main/resources : 정적 리소스 디렉토리
-- /src/main/.../domain : 도메인 패키지 (비즈니스 로직 구현)
-- /src/main/.../global : 공통 기능 구현
 - /src/test : api 테스트 코드 작성
 
 ## Request/Response Flow
