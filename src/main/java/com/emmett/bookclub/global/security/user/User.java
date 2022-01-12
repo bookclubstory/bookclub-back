@@ -146,4 +146,15 @@ public class User {
 
         return this;
     }
+
+    @Builder
+    public User signUp(String username, String password, String email, String createdBy, LocalDateTime creationDate) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.createdBy = createdBy;
+        this.creationDate = creationDate;
+
+        return this;
+    }
 }

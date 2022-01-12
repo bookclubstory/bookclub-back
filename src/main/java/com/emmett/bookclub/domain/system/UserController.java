@@ -15,15 +15,22 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDto> registration(@RequestBody UserDto userDto) {
-        return userService.registerUser(userDto);
+    /**
+     * Sign up (by user)
+     * */
+    @PostMapping("/signup")
+    public ResponseEntity<UserDto> signUp(@RequestBody UserDto userDto) {
+        return userService.signUp(userDto);
     }
 
+    /**
+     * add new User (by Admin)
+     * */
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
         return userService.createUser(userDto);
     }
+
     @PutMapping
     public ResponseEntity<UserDto> editUser(@RequestBody UserDto userDto) {
         return userService.editUser(userDto);

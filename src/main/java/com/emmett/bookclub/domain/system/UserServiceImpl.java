@@ -12,6 +12,7 @@ import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +36,6 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
@@ -49,7 +49,41 @@ public class UserServiceImpl implements UserService {
     private final LoginHistoryRepository loginHistoryRepository;
 
     @Override
-    @Transactional
+    @Modifying
+    public ResponseEntity<UserDto> signUp(UserDto userDto) {
+        userRepository.findByUsername(userDto.getUsername()).ifPresent(c -> {
+            throw new RuntimeException("User Name(" + userDto.getUsername() + ") is already registered...");
+        });
+
+        try {
+            // 1st save User without userRoles
+            User user = new User();
+            user.signUp(
+                    userDto.getUsername(),
+                    passwordEncoder.encode(userDto.getPassword()),
+                    userDto.getEmail(),
+                    "system",
+                    LocalDateTime.now());
+            userRepository.save(user);
+
+            // 2nd save UserRole
+            UserRole userRole = new UserRole();
+            userRole.newUserRole(
+                    userDto.getUsername(),
+                    "USER",
+                    "system",
+                    LocalDateTime.now()
+            );
+            userRoleRepository.save(userRole);
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
+    }
+
+    @Override
+    @Modifying
     public ResponseEntity<UserDto> createUser(UserDto userDto) {
         String loginId = util.getLoginId();
         if (StringUtils.isBlank(loginId)) {
@@ -59,37 +93,34 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("User Name(" + userDto.getUsername() + ") is already registered...");
         });
         try {
-            String finalLoginId = loginId;
-            userRepository.findByUsername(userDto.getUsername()).ifPresent(c -> {
-                List<UserRole> newRoles = new ArrayList<>();
-                for (String role :
-                        userDto.getRoles()) {
-                    UserRole userRole = new UserRole();
-                    userRole.newUserRole(c.getUsername(),
-                            role,
-                            finalLoginId,
-                            LocalDateTime.now());
-                    userRoleRepository.save(userRole);
+            List<UserRole> userRoles = new ArrayList<>();
+            for (String role :
+                    userDto.getRoles()) {
+                UserRole userRole = new UserRole();
+                userRole.newUserRole(userDto.getUsername(),
+                        role,
+                        loginId,
+                        LocalDateTime.now());
+                userRoleRepository.save(userRole);
 
-                    newRoles.add(userRole);
-                }
+                userRoles.add(userRole);
+            }
 
-            User newUser = new User();
-            newUser.newUser(
+            User user = new User();
+            user.newUser(
                     userDto.getUsername(),
                     passwordEncoder.encode(userDto.getPassword()),
                     userDto.getFirstName(),
                     userDto.getLastName(),
                     userDto.getTel(),
                     userDto.getEmail(),
-                    newRoles,
+                    userRoles,
                     userDto.getAddress1(),
                     userDto.getAddress2(),
                     userDto.getIsValid(),
-                    finalLoginId,
+                    loginId,
                     LocalDateTime.now());
-            userRepository.save(newUser);
-            });
+            userRepository.save(user);
 
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -227,7 +258,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Modifying
     public ResponseEntity<UserDto> updateUser(UserDto userDto) {
         String loginId = util.getLoginId();
 
@@ -290,7 +321,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Modifying
     public boolean deleteUser(String username) {
         userRepository.deleteById(username);
         return true;
@@ -320,7 +351,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Modifying
     public ResponseEntity<UserDto> editUser(UserDto userDto) {
         String loginId = util.getLoginId();
         if (StringUtils.isBlank(loginId)) {
