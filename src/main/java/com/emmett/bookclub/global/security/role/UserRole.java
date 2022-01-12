@@ -1,6 +1,7 @@
 package com.emmett.bookclub.global.security.role;
 
 import com.emmett.bookclub.global.security.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

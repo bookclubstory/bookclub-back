@@ -13,6 +13,9 @@ import java.util.Map;
 
 @Transactional
 public interface UserService {
+
+    ResponseEntity<UserDto> signUp(UserDto userDto);
+
     @Modifying
     ResponseEntity<UserDto> createUser(UserDto userDto);
 
