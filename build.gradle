@@ -32,7 +32,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 	implementation 'org.projectlombok:lombok:1.18.18'
     implementation 'junit:junit:4.13.1'
     compileOnly 'org.projectlombok:lombok'
