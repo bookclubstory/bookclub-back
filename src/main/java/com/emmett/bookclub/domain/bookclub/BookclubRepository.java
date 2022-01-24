@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface BookclubRepository extends JpaRepository<Bookclub, String> {
-    List<Bookclub> findByClubNmOrClubLocOrClubIntroOrderByClubNmAsc(String keyword);
+    List<Bookclub> findByClubNmOrClubLocOrClubIntroOrderByClubNmAsc(String clubNm, String clubLoc, String clubIntro);
 }
