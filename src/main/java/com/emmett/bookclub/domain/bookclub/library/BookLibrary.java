@@ -3,14 +3,12 @@ package com.emmett.bookclub.domain.bookclub.library;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@IdClass(BookLibraryKey.class)
 @RequiredArgsConstructor
 @Table(name = "TB_LIBRARY")
 public class BookLibrary {

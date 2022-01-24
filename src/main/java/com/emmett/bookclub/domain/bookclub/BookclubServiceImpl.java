@@ -16,7 +16,7 @@ public class BookclubServiceImpl implements BookclubService {
     @Override
     public ResponseEntity<List<Map<String, Object>>> searchBookclub(String keyword) {
         // TODO://add ~NotClosedYn(true)
-        List<Bookclub> list = bookclubRepository.findByClubNmOrClubLocOrClubIntroOrderByClubNmAsc(keyword);
+        List<Bookclub> list = bookclubRepository.findByClubNmOrClubLocOrClubIntroOrderByClubNmAsc(keyword, keyword, keyword);
 
         List<Map<String, Object>> result = new ArrayList<>();
 
