@@ -17,8 +17,8 @@ public class Code {
     @Column(name = "code")
     String code;
 
-    @Column(name = "sorting_number")
-    Long sortingNumber;
+    @Column(name = "column_ord")
+    Long columnOrd;
 
     @Column(name = "code_type")
     String codeType;
@@ -46,9 +46,9 @@ public class Code {
     LocalDateTime modifiedDate;
 
     @Builder
-    public Code(String code, Long sortingNumber, String codeType, String upperCode, String codeDesc, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
+    public Code(String code, Long columnOrd, String codeType, String upperCode, String codeDesc, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
         this.code = code;
-        this.sortingNumber = sortingNumber;
+        this.columnOrd = columnOrd;
         this.codeType = codeType;
         this.upperCode = upperCode;
         this.codeDesc = codeDesc;
