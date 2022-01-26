@@ -13,7 +13,7 @@ public class CodeServiceImpl implements CodeService {
     private List<Map<String, Object>> getKeyValuePair(String upperCode) {
         List<Map<String, Object>> result = new ArrayList<>();
 
-        codeRepository.findByUpperCodeOrderBySortingNumberAsc(upperCode)
+        codeRepository.findByUpperCodeOrderByColumnOrdAsc(upperCode)
                 .stream()
                 .forEach(code -> {
                     Map<String, Object> map = new HashMap<>();

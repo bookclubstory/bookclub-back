@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface CodeRepository extends JpaRepository<Code, CodeKey> {
-    List<Code> findByUpperCodeOrderBySortingNumberAsc(String upperCode);
+    List<Code> findByUpperCodeOrderByColumnOrdAsc(String upperCode);
 }
