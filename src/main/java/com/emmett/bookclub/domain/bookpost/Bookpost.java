@@ -52,9 +52,13 @@ public class Bookpost {
     @Column(name = "modified_date")
     LocalDateTime modifiedDate;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumns({
+            @JoinColumn(name="post_id", referencedColumnName = "post_id", insertable = false, updatable = false),
+            @JoinColumn(name="rprs_image", referencedColumnName = "attach_id", insertable = false, updatable = false)
+    })
     //대표이미지
-    PostFiles rprsImageFiles;
+    PostFiles rprsImageFile;
 
     @OneToMany(mappedBy = "bookpost", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     List<PostFiles> postFiles = new ArrayList<>();

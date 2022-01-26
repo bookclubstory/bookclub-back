@@ -8,13 +8,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @RequiredArgsConstructor
 @Table(name = "TB_BOARD_FILE")
-public class PostFiles {
+public class PostFiles implements Serializable {
     @Id
     @Column(name = "board_file_id")
     int boardFileId;
@@ -50,9 +51,6 @@ public class PostFiles {
     @UpdateTimestamp
     @Column(name = "modified_date")
     LocalDateTime modifiedDate;
-
-    @OneToOne(mappedBy="rprsImageFiles")
-    Bookpost rprsBookpost;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id", referencedColumnName = "post_id", insertable = false, updatable = false)
