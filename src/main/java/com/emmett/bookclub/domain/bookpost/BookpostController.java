@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -22,7 +21,7 @@ public class BookpostController {
      * Description:
      * */
     @GetMapping("/list")
-    public ResponseEntity<List<Map<String, Object>>> getBookpostList() {
+    public ResponseEntity<List<BookpostDto>> getBookpostList() {
         return bookpostService.getBookpostList();
     }
 }
