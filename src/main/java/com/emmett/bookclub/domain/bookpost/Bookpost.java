@@ -1,13 +1,15 @@
 package com.emmett.bookclub.domain.bookpost;
 
+import com.emmett.bookclub.domain.bookpost.files.PostFiles;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,14 +41,23 @@ public class Bookpost {
     @Column(name = "created_by")
     String createdBy;
 
-    @Column(name = "creation_date")
+    @CreationTimestamp
+    @Column(name = "creation_date", updatable = false)
     LocalDateTime creationDate;
 
     @Column(name = "modified_by")
     String modifiedBy;
 
+    @UpdateTimestamp
     @Column(name = "modified_date")
     LocalDateTime modifiedDate;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    //대표이미지
+    PostFiles rprsImageFiles;
+
+    @OneToMany(mappedBy = "bookpost", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    List<PostFiles> postFiles = new ArrayList<>();
 
     // default constructor
     public Bookpost(int boardId, String postId, String title, String contentType, String content, String rprsImage, int likeCount, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
