@@ -1,6 +1,7 @@
 package com.emmett.bookclub.domain.bookpost;
 
 import com.emmett.bookclub.domain.bookpost.files.PostFilesService;
+import com.emmett.bookclub.domain.model.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class BookpostServiceImpl implements BookpostService {
     private final PostFilesService postFilesService;
 
     public ResponseEntity<List<BookpostDto>> getBookpostList() {
-        List<BookpostDto> result= bookpostRepository.getBookpostRprsImgList()
+        List<BookpostDto> list = bookpostRepository.getBookpostRprsImgList()
                 .stream()
                 .map(b->new BookpostDto(
                         (int)b[0],//boardId
@@ -31,8 +32,11 @@ public class BookpostServiceImpl implements BookpostService {
                         String.valueOf(Optional.ofNullable(b[7]).orElse("")),
                         (LocalDateTime)(Optional.ofNullable(b[8]).orElse(LocalDateTime.now()))
                         )
-                ).collect(Collectors.toList());
+                ).collect(Collectors.collectingAndThen(Collectors.toList(), result->{
+                    if(result.isEmpty())throw new NotFoundException("해당 게시물이 존재하지 않습니다.");
+                    return result;
+                }));
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 }
