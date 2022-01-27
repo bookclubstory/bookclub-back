@@ -27,6 +27,48 @@ DDD을 참고하여 도메인 단위로 sub-package를 구성합니다.
 - /src/main/resources : 정적 리소스 디렉토리
 - /src/test : api 테스트 코드 작성
 
+```
+project
+└───libs
+└───src
+│   └───docs
+│   │   └───asciidoc
+│   │       │   api-doc.adoc
+│   └───main
+│   │   └───java
+│   │   │   └───com.emmette.bookclub
+│   │   │       └───domain
+│   │   │       │   └───bookclub
+│   │   │       │   └───bookpost
+│   │   │       │   └───mainpage
+│   │   │       │   └───model
+│   │   │       │   └───system
+│   │   │       └───global
+│   │   │       │   └───config
+│   │   │       │   └───mail
+│   │   │       │   └───schedule
+│   │   │       │   └───security
+│   │   │       │   └───util
+│   │   │       │   BookclubApplication.java
+│   │   └───resources
+│   │       │   application.properties
+│   │       │   application-dev.properties
+│   │       │   application-production.properties
+│   │       │   banner.txt
+│   │       │   logback.xml
+│   └───test
+│       └───java
+│           └───com.emmete.bookclub
+│               └───domain
+│   
+│   .gitignore
+│   build.gradle
+│   gradlew
+│   gradlew.bat
+│   README.md
+│   settings.gradle
+```
+
 ## Request/Response Flow
 1. request by Controller
 2. Controller call Service interface
