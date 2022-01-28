@@ -18,6 +18,7 @@ public interface BookpostRepository extends JpaRepository<Bookpost, String> {
             "b.creationDate, " +
             "b.modifiedBy, " +
             "b.modifiedDate " +
-            "from Bookpost b join PostFiles f on b.postId = f.postId and b.rprsImage = f.attachId")
+            "from Bookpost b left join PostFiles f on b.postId = f.postId and b.rprsImage = f.attachId " +
+            "order by b.postId desc")
     List<Object[]> getBookpostRprsImgList();
 }
