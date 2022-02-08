@@ -1,5 +1,6 @@
 package com.emmett.bookclub.domain.bookpost.files;
 
+import com.emmett.bookclub.domain.model.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -42,14 +43,14 @@ public class PostFilesServiceImpl implements PostFilesService {
             Resource resource = new UrlResource(filePath.toUri());
 
             if(!resource.exists()){
-                throw new RuntimeException("파일을 찾을 수 없습니다." + fileName);
+                throw new NotFoundException(fileName + " 을 찾을 수 없습니다.");
             }
 
             return resource;
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            throw new RuntimeException("파일을 찾을 수 없습니다." + fileName);
+            throw new NotFoundException(fileName+ " 을 찾을 수 없습니다.");
         }
     }
 
