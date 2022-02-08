@@ -1,5 +1,7 @@
 package com.emmett.bookclub.domain.bookpost;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,4 +23,18 @@ public interface BookpostRepository extends JpaRepository<Bookpost, String> {
             "from Bookpost b left join PostFiles f on b.postId = f.postId and b.rprsImage = f.attachId " +
             "order by b.postId desc")
     List<Object[]> getBookpostRprsImgList();
+
+    @Query("select " +
+            "b.boardId, " +
+            "b.postId, " +
+            "b.title, " +
+            "b.rprsImage, " +
+            "f.fileName," +
+            "b.createdBy, " +
+            "b.creationDate, " +
+            "b.modifiedBy, " +
+            "b.modifiedDate " +
+            "from Bookpost b left join PostFiles f on b.postId = f.postId and b.rprsImage = f.attachId " +
+            "order by b.postId desc")
+    Page<Object[]> getBookpostRprsImgList(Pageable pageable);
 }
