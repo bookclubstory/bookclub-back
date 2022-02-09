@@ -24,19 +24,19 @@ public class BookpostServiceImpl implements BookpostService {
     public ResponseEntity<List<BookpostDto>> getBookpostList() {
         List<BookpostDto> list = bookpostRepository.getBookpostRprsImgList()
                 .stream()
-                .map(b->new BookpostDto(
-                        (int)b[0],//boardId
-                        String.valueOf(Optional.ofNullable(b[1]).orElse("")),//postId
-                        String.valueOf(Optional.ofNullable(b[2]).orElse("")),//title
-                        String.valueOf(Optional.ofNullable(b[3]).orElse("")),//rprsImage
-                        postFilesService.getDownloadFileUri(String.valueOf(Optional.ofNullable(b[4]).orElse(""))), //fileName
-                        String.valueOf(Optional.ofNullable(b[5]).orElse("")),
-                        (LocalDateTime)(Optional.ofNullable(b[6]).orElse(LocalDateTime.now())),
-                        String.valueOf(Optional.ofNullable(b[7]).orElse("")),
-                        (LocalDateTime)(Optional.ofNullable(b[8]).orElse(LocalDateTime.now()))
+                .map(b -> new BookpostDto(
+                                (int) b[0],//boardId
+                                String.valueOf(Optional.ofNullable(b[1]).orElse("")),//postId
+                                String.valueOf(Optional.ofNullable(b[2]).orElse("")),//title
+                                String.valueOf(Optional.ofNullable(b[3]).orElse("")),//rprsImage
+                                postFilesService.getDownloadFileUri(String.valueOf(Optional.ofNullable(b[4]).orElse(""))), //fileName
+                                String.valueOf(Optional.ofNullable(b[5]).orElse("")),
+                                (LocalDateTime) (Optional.ofNullable(b[6]).orElse(LocalDateTime.now())),
+                                String.valueOf(Optional.ofNullable(b[7]).orElse("")),
+                                (LocalDateTime) (Optional.ofNullable(b[8]).orElse(LocalDateTime.now()))
                         )
-                ).collect(Collectors.collectingAndThen(Collectors.toList(), result->{
-                    if(result.isEmpty())throw new NotFoundException("해당 게시물이 존재하지 않습니다.");
+                ).collect(Collectors.collectingAndThen(Collectors.toList(), result -> {
+                    if (result.isEmpty()) throw new NotFoundException("해당 게시물이 존재하지 않습니다.");
                     return result;
                 }));
 
@@ -48,19 +48,19 @@ public class BookpostServiceImpl implements BookpostService {
         Page<Object[]> objects = bookpostRepository.getBookpostRprsImgList(pageable);
         List<BookpostDto> list = objects
                 .stream()
-                .map(b->new BookpostDto(
-                                (int)b[0],//boardId
+                .map(b -> new BookpostDto(
+                                (int) b[0],//boardId
                                 String.valueOf(Optional.ofNullable(b[1]).orElse("")),//postId
                                 String.valueOf(Optional.ofNullable(b[2]).orElse("")),//title
                                 String.valueOf(Optional.ofNullable(b[3]).orElse("")),//rprsImage
                                 postFilesService.getDownloadFileUri(String.valueOf(Optional.ofNullable(b[4]).orElse(""))), //fileName
                                 String.valueOf(Optional.ofNullable(b[5]).orElse("")),
-                                (LocalDateTime)(Optional.ofNullable(b[6]).orElse(LocalDateTime.now())),
+                                (LocalDateTime) (Optional.ofNullable(b[6]).orElse(LocalDateTime.now())),
                                 String.valueOf(Optional.ofNullable(b[7]).orElse("")),
-                                (LocalDateTime)(Optional.ofNullable(b[8]).orElse(LocalDateTime.now()))
+                                (LocalDateTime) (Optional.ofNullable(b[8]).orElse(LocalDateTime.now()))
                         )
-                ).collect(Collectors.collectingAndThen(Collectors.toList(), result->{
-                    if(result.isEmpty())throw new NotFoundException("해당 게시물이 존재하지 않습니다.");
+                ).collect(Collectors.collectingAndThen(Collectors.toList(), result -> {
+                    if (result.isEmpty()) throw new NotFoundException("해당 게시물이 존재하지 않습니다.");
                     return result;
                 }));
 
