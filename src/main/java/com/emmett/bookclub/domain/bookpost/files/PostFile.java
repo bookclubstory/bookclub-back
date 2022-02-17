@@ -2,6 +2,7 @@ package com.emmett.bookclub.domain.bookpost.files;
 
 import com.emmett.bookclub.domain.bookpost.Bookpost;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @RequiredArgsConstructor
 @Table(name = "TB_BOARD_FILE")
-public class PostFiles implements Serializable {
+public class PostFile implements Serializable {
     @Id
     @Column(name = "board_file_id")
     int boardFileId;
@@ -23,8 +24,8 @@ public class PostFiles implements Serializable {
     @Column(name = "post_id")
     String postId;
 
-    @Column(name = "attach_id")
-    String attachId;
+    @Column(name = "file_order")
+    int fileOrder;
 
     @Column(name = "file_name")
     String fileName;
@@ -37,6 +38,12 @@ public class PostFiles implements Serializable {
 
     @Column(name = "thumbnail")
     String thumbnail;
+
+    @Column(name = "file_path")
+    String filePath;
+
+    @Column(name = "file_size")
+    Long fileSize;
 
     @Column(name = "created_by")
     String createdBy;
@@ -58,14 +65,16 @@ public class PostFiles implements Serializable {
     Bookpost bookpost;
 
     // default constructor
-    public PostFiles(int boardFileId, String postId, String attachId, String fileName, String fileType, String fileExt, String thumbnail, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
+    public PostFile(int boardFileId, String postId, int fileOrder, String fileName, String fileType, String fileExt, String thumbnail, String filePath, Long fileSize, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
         this.boardFileId = boardFileId;
         this.postId = postId;
-        this.attachId = attachId;
+        this.fileOrder = fileOrder;
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileExt = fileExt;
         this.thumbnail = thumbnail;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
         this.createdBy = createdBy;
         this.creationDate = creationDate;
         this.modifiedBy = modifiedBy;
@@ -73,4 +82,12 @@ public class PostFiles implements Serializable {
     }
 
     //TODO:// add @Builder constructor
+    @Builder
+    public PostFile(String postId, int fileOrder, String fileName, String filePath, Long fileSize) {
+        this.postId = postId;
+        this.fileOrder = fileOrder;
+        this.fileName = fileName;
+        this.filePath = filePath;
+        this.fileSize = fileSize;
+    }
 }

@@ -26,8 +26,8 @@ public class LoginHistory {
             generator = "LOGIN_HISTORY_GEN")//Oracle*/
     String logId;
 
-    @Column(name = "user_id")
-    String userId;
+    @Column(name = "username")
+    String username;
 
     @Column(name = "access_addr")
     String accessAddr;
@@ -46,9 +46,9 @@ public class LoginHistory {
     LocalDateTime creationDate;
 
     @Builder
-    public LoginHistory(String logId, String userId, String accessAddr, String connectMethod, String requestError, String requestedApi, LocalDateTime creationDate) {
+    public LoginHistory(String logId, String username, String accessAddr, String connectMethod, String requestError, String requestedApi, LocalDateTime creationDate) {
         this.logId = logId;
-        this.userId = userId;
+        this.username = username;
         this.accessAddr = accessAddr;
         this.connectMethod = connectMethod;
         this.requestError = requestError;

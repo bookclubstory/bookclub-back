@@ -39,7 +39,7 @@ public class Util {
     }*/
 
     public User getLoginUser() {
-        Optional<User> user = userRepository.findByUsername(getLoginId());
+        Optional<User> user = userRepository.findById(getLoginId());
 
         return user.orElse(null);
     }

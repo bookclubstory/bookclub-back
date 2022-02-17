@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PostFilesRepository extends JpaRepository<PostFiles, Integer> {
-    Optional<PostFiles> findById(Integer boardFileId);
+public interface PostFileRepository extends JpaRepository<PostFile, Integer> {
+    Optional<PostFile> findById(Integer boardFileId);
 }

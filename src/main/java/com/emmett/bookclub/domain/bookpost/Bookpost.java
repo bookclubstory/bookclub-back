@@ -1,6 +1,6 @@
 package com.emmett.bookclub.domain.bookpost;
 
-import com.emmett.bookclub.domain.bookpost.files.PostFiles;
+import com.emmett.bookclub.domain.bookpost.files.PostFile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,11 +32,17 @@ public class Bookpost {
     @Column(name = "content")
     String content;
 
-    @Column(name = "rprs_image")
-    String rprsImage;
+    @Column(name = "view_count")
+    int viewCount;
 
     @Column(name = "like_count")
     int likeCount;
+
+    @Column(name = "author")
+    String author;
+
+    @Column(name = "post_date")
+    String postDate;
 
     @Column(name = "created_by")
     String createdBy;
@@ -52,25 +58,16 @@ public class Bookpost {
     @Column(name = "modified_date")
     LocalDateTime modifiedDate;
 
-    @OneToOne(fetch=FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name="post_id", referencedColumnName = "post_id", insertable = false, updatable = false),
-            @JoinColumn(name="rprs_image", referencedColumnName = "attach_id", insertable = false, updatable = false)
-    })
-    //대표이미지
-    PostFiles rprsImageFile;
-
     @OneToMany(mappedBy = "bookpost", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    List<PostFiles> postFiles = new ArrayList<>();
+    List<PostFile> postFiles = new ArrayList<>();
 
     // default constructor
-    public Bookpost(int boardId, String postId, String title, String contentType, String content, String rprsImage, int likeCount, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
+    public Bookpost(int boardId, String postId, String title, String contentType, String content, int likeCount, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
         this.boardId = boardId;
         this.postId = postId;
         this.title = title;
         this.contentType = contentType;
         this.content = content;
-        this.rprsImage = rprsImage;
         this.likeCount = likeCount;
         this.createdBy = createdBy;
         this.creationDate = creationDate;
@@ -79,4 +76,7 @@ public class Bookpost {
     }
 
     //TODO:// add @Builder constructor
+    public void addFile(PostFile postFile) {
+        this.postFiles.add(postFile);
+    }
 }

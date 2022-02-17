@@ -16,8 +16,8 @@ import java.net.URLEncoder;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/bookpost/files")
-public class PostFilesController {
-    private final PostFilesService postFilesService;
+public class PostFileController {
+    private final PostFileService postFileService;
 
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName
@@ -29,7 +29,7 @@ public class PostFilesController {
         String originalFileName = null;
 
         try {
-            resource = postFilesService.getDownloadFile(fileName, boardFileId);
+            resource = postFileService.getDownloadFile(fileName, boardFileId);
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
             originalFileName = resource.getFile().getName();
 

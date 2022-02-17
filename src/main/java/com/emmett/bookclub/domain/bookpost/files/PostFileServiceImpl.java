@@ -14,9 +14,9 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class PostFilesServiceImpl implements PostFilesService {
+public class PostFileServiceImpl implements PostFileService {
     private final Path fileStorageLocation;
-    private final PostFilesRepository postFilesRepository;
+    private final PostFileRepository postFileRepository;
 
     @Value("/api/v1/bookpost/files/download/")
     private String IMG_API;
@@ -56,7 +56,7 @@ public class PostFilesServiceImpl implements PostFilesService {
 
     @Override
     public String getFileName(Integer boardFileId) {
-        Optional<PostFiles> postFile = postFilesRepository.findById(boardFileId);
+        Optional<PostFile> postFile = postFileRepository.findById(boardFileId);
         return postFile.map(file -> file.fileName)
                 .orElse("fileNameError");
     }

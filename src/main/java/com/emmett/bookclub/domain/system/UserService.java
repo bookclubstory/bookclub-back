@@ -16,7 +16,6 @@ public interface UserService {
 
     ResponseEntity<UserDto> signUp(UserDto userDto);
 
-    @Modifying
     ResponseEntity<UserDto> createUser(UserDto userDto);
 
     List<UserDto> getUserList();
@@ -32,7 +31,6 @@ public interface UserService {
 
     List<Map<String, Object>> searchUserList(String keyword);
 
-    @Modifying
     boolean deleteUser(String username);
 
     ResponseEntity<UserDto> getUserDetail(String username);
@@ -40,5 +38,4 @@ public interface UserService {
     @Modifying
     ResponseEntity<UserDto> editUser(UserDto userDto);
 
-    ResponseEntity<UserDto> registerUser(UserDto userDto);
 }

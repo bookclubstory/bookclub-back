@@ -4,6 +4,8 @@ import com.emmett.bookclub.global.security.role.Role;
 import com.emmett.bookclub.global.security.role.RoleDto;
 import com.emmett.bookclub.global.security.role.RoleRepository;
 import com.emmett.bookclub.global.security.role.UserRoleRepository;
+import com.emmett.bookclub.global.security.user.User;
+import com.emmett.bookclub.global.security.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
@@ -11,16 +13,14 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class RoleServiceImpl implements RoleService {
+    private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
 
@@ -75,9 +75,11 @@ public class RoleServiceImpl implements RoleService {
         userRoleRepository.findByRole(role)
                 .stream()
                 .forEach(c -> {
+                    Optional<User> user = userRepository.findById(c.getUsername());
+
                     Map<String, Object> map = new HashMap<>();
                     map.put("role", c.getRole());
-                    map.put("username", c.getUsername());
+                    map.put("username", user.get().getUsername());
                     map.put("firstName", c.getUser().getFirstName());
                     map.put("lastName", c.getUser().getLastName());
 
