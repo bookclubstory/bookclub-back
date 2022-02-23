@@ -12,8 +12,8 @@ public interface BookclubMemberDto {
     String getFirstName();
     String getEmail();
     String getClubAuth();
-    String getValue();
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime getClubJoinDate();
     Integer getSessionCnt();
+    Boolean getIsEnabled();
 }
