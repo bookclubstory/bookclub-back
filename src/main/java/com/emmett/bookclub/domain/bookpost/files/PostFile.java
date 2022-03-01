@@ -83,11 +83,19 @@ public class PostFile implements Serializable {
 
     //TODO:// add @Builder constructor
     @Builder
-    public PostFile(String postId, int fileOrder, String fileName, String filePath, Long fileSize) {
+    public PostFile(int boardFileId, String postId, int fileOrder, String fileName, String filePath, Long fileSize) {
+        this.boardFileId = boardFileId;
         this.postId = postId;
         this.fileOrder = fileOrder;
         this.fileName = fileName;
         this.filePath = filePath;
         this.fileSize = fileSize;
+    }
+
+    public PostFile updateAuthor(String createdBy, String modifiedBy) {
+        this.createdBy = createdBy;
+        this.modifiedBy = modifiedBy;
+
+        return this;
     }
 }

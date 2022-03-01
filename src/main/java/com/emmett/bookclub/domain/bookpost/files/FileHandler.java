@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileHandler {
     private final PostFileService postFileService;
+    private final PostFileRepository postFileRepository;
 
     public List<PostFile> parseFileInfo(String postId, List<MultipartFile> multipartFiles) throws IOException {
         // 변환할 파일 리스트
@@ -84,7 +85,10 @@ public class FileHandler {
                 Description:
                   - Post ID -> "A_USER.USER_ID-current_date-Sequence"
                   */
+                // TODO: change to default constructor
+                int currentBoardFilesCount = postFileRepository.findAll().size();
                 PostFile postFile = new PostFile(
+                        currentBoardFilesCount,
                         postId,
                         fileOrder,
                         multipartFile.getOriginalFilename(),

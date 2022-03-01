@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -81,13 +82,15 @@ public class BookpostServiceImpl implements BookpostService {
 
     @Override
     @Modifying
+    @Transactional
     public ResponseEntity<String> addNewBookpost(BookpostFileVo bookpostFileVo) throws Exception {
+        String loginId = util.getLoginId();
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String currentDate = now.format(dateTimeFormatter);
 
         String currentUserId = util.getLoginId();
-        List<Bookpost> list = bookpostRepository.findByPostIdContains(currentUserId + currentDate);
+        List<Bookpost> list = bookpostRepository.findByPostIdContains(currentUserId + "-" + currentDate);
         String postId = currentUserId + "-" + currentDate + "-" + list.size();
 
         List<MultipartFile> files = bookpostFileVo.getFiles();
@@ -101,9 +104,9 @@ public class BookpostServiceImpl implements BookpostService {
                 "image",
                 bookpostFileVo.getContent(),
                 0,
-                util.getLoginId(),
+                loginId,
                 LocalDateTime.now(),
-                util.getLoginId(),
+                loginId,
                 LocalDateTime.now()
         );
 
@@ -116,6 +119,7 @@ public class BookpostServiceImpl implements BookpostService {
             for (PostFile file : postFileList) {
                 // 파일 정보 DB 저장
                 //bookpost.addFile(postFileRepository.save(file));
+                file.updateAuthor(loginId, loginId);
                 postFileRepository.save(file);
             }
         }
