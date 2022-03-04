@@ -3,10 +3,15 @@ package com.emmett.bookclub.global.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.ReactiveRedisOperations;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
@@ -53,6 +58,18 @@ public class RedisHttpSessionConfig extends AbstractHttpSessionApplicationInitia
     @Bean
     public HttpSessionIdResolver httpSessionIdResolver() {
         return HeaderHttpSessionIdResolver.xAuthToken();
+    }
+
+    @Bean
+    public ReactiveRedisOperations<String, String> redisOperations(ReactiveRedisConnectionFactory factory){
+        RedisSerializer<String> serializer = new StringRedisSerializer();
+
+        RedisSerializationContext.RedisSerializationContextBuilder<String, String> builder =
+                RedisSerializationContext.newSerializationContext(serializer);
+
+        RedisSerializationContext<String, String> context = builder.value(serializer).build();
+
+        return new ReactiveRedisTemplate<>(factory, context);
     }
 
 }
