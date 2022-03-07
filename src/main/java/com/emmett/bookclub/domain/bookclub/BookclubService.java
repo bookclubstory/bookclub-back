@@ -8,6 +8,8 @@ import java.util.Map;
 
 @Transactional
 public interface BookclubService {
+    ResponseEntity<List<BookclubDto>> getBookclubList();
+
     ResponseEntity<List<Map<String, Object>>> searchBookclub(String keyword);
 
     ResponseEntity<String> addBookclub(BookclubDto bookclubDto);
