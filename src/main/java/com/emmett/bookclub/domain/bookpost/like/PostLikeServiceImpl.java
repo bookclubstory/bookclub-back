@@ -16,34 +16,34 @@ public class PostLikeServiceImpl implements PostLikeService{
     private final Util util;
 
     @Override
-    public Flux<Object> pushLike(String boardId) {
+    public Flux<Long> updateLike(String postId) {
         String loginId = util.getLoginId();
         ReactiveSetOperations<String, String> operations = redisOperations.opsForSet();
 
-        return operations.members(boardId)
+        return operations.members(postId)
                 .filter(member->loginId.equals(member))
-                .flatMap(s -> Mono.error(new BadRequestException(loginId + "는 해당 게시물에 이미 좋아요를 눌렀습니다.")))
-                .switchIfEmpty(operations.add(boardId,loginId));
+                .flatMap(s->operations.remove(postId,s))
+                .switchIfEmpty(Mono.defer(()->operations.add(postId, loginId)));
     }
 
     @Override
-    public Flux<Object> cancelLike(String boardId) {
+    public Flux<Object> deleteLike(String postId) {
         String loginId = util.getLoginId();
         ReactiveSetOperations<String, String> operations = redisOperations.opsForSet();
 
-        return operations.members(boardId)
+        return operations.members(postId)
                 .filter(member->loginId.equals(member))
                 .switchIfEmpty(Mono.error(new BadRequestException("이미 취소 되었습니다.")))
-                .flatMap(s -> operations.remove(boardId,s));
+                .flatMap(s -> operations.remove(postId,s));
     }
 
     @Override
-    public Mono<PostLikeDto> getLike(String boardId) {
+    public Mono<PostLikeDto> getLike(String postId) {
         String loginId = util.getLoginId();
 
-        return redisOperations.opsForSet().members(boardId)
+        return redisOperations.opsForSet().members(postId)
                 .collectList()
-                .map(list -> new PostLikeDto(boardId, loginId, (long)list.size(), list.contains(loginId)));
+                .map(list -> new PostLikeDto(postId, loginId, (long)list.size(), list.contains(loginId)));
     }
 }
 
