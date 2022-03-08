@@ -1,20 +1,19 @@
 package com.emmett.bookclub.domain.bookclub;
 
-import lombok.Builder;
+import com.emmett.bookclub.domain.bookclub.member.BookclubMember;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @RequiredArgsConstructor
 @Table(name = "TB_BOOKCLUB")
-public class Bookclub {
+public class Bookclub implements Serializable {
     @Column(name = "bookclub_id")
     int bookclubId;
 
@@ -60,6 +59,10 @@ public class Bookclub {
 
     @Column(name = "modified_date")
     LocalDateTime modifiedDate;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "club_id")
+    List<BookclubMember> bookclubMembers;
 
     // Default Constructor
     public Bookclub(int bookclubId, String clubId, String clubNm, String clubLoc, int clubMemberCnt, Boolean privateYn, String clubIntro, String fileName, String fileExt, String thumbnail, String closedYn, String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {

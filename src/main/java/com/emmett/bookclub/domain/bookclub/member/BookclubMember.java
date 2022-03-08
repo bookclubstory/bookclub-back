@@ -1,6 +1,8 @@
 package com.emmett.bookclub.domain.bookclub.member;
 
+import com.emmett.bookclub.domain.bookclub.Bookclub;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -47,4 +49,9 @@ public class BookclubMember implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @UpdateTimestamp
     LocalDateTime modifiedDate;
+
+    @ManyToOne
+    @JoinColumn(name = "club_id", insertable = false, updatable = false)
+    @JsonIgnore
+    Bookclub bookclub;
 }

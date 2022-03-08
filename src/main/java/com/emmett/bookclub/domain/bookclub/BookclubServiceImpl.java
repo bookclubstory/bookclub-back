@@ -1,5 +1,8 @@
 package com.emmett.bookclub.domain.bookclub;
 
+import com.emmett.bookclub.domain.bookclub.member.BookclubMember;
+import com.emmett.bookclub.domain.bookclub.member.BookclubMemberRepository;
+import com.emmett.bookclub.domain.bookclub.member.ClubAuth;
 import com.emmett.bookclub.domain.bookpost.files.PostFilesService;
 import com.emmett.bookclub.domain.model.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class BookclubServiceImpl implements BookclubService {
     private final BookclubRepository bookclubRepository;
+    private final BookclubMemberRepository bookclubMemberRepository;
     private final PostFilesService postFilesService;
 
     @Override
@@ -88,24 +92,30 @@ public class BookclubServiceImpl implements BookclubService {
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> getBookclubDetail(String clubId) {
-        Map<String, Object> result = new HashMap<>();
+    public ResponseEntity<BookclubDto> getBookclubDetail(String clubId) {
+        BookclubDto bookclubDto = new BookclubDto();
+        Bookclub bookclub = bookclubRepository.findById(clubId)
+                .orElseThrow(()->new NotFoundException("There is no book Club."));
 
-        Optional<Bookclub> bookclub = bookclubRepository.findById(clubId);
-        if (bookclub.isPresent()) {
-            result.put("clubId", bookclub.get().getClubId());
-            result.put("clubNm", bookclub.get().getClubNm());
-            result.put("clubLoc", bookclub.get().getClubLoc());
-            result.put("clubMemberCnt", bookclub.get().getClubMemberCnt());
-            result.put("privateYn", bookclub.get().getPrivateYn());
-            result.put("clubIntro", bookclub.get().getClubIntro());
-            result.put("fileName", bookclub.get().getFileName());
-            result.put("fileExt", bookclub.get().getFileExt());
-            result.put("thumbnail", bookclub.get().getThumbnail());
-        } else {
-            throw new RuntimeException("There is no book Club.");
-        }
+        bookclubDto.setClubId(bookclub.getClubId());
+        bookclubDto.setClubNm(bookclub.getClubNm());
+        bookclubDto.setClubLoc(bookclub.getClubLoc());
+        bookclubDto.setTotMemberCnt(bookclub.getClubMemberCnt());
+        bookclubDto.setPrivateYn(bookclub.getPrivateYn());
+        bookclubDto.setClubIntro(bookclub.getClubIntro());
+        bookclubDto.setFileName(bookclub.getFileName());
+        bookclubDto.setFileExt(bookclub.getFileExt());
+        bookclubDto.setThumbnail(postFilesService.getDownloadFileUri(bookclub.getThumbnail()));
 
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        List<BookclubMember> bookclubMembers = bookclub.getBookclubMembers();
+        BookclubMember owner = bookclub.getBookclubMembers()
+                .stream()
+                .filter(bookclubMember -> ClubAuth.CLUB_OWNER.getCode().equals(bookclubMember.getClubAuth()))
+                .findFirst()
+                .orElseGet(() -> bookclubMemberRepository.findBookclubMemberByUsername(bookclub.getCreatedBy()).get());
+        bookclubDto.setOwner(owner);
+        bookclubDto.setMemberCnt(bookclubMembers.stream().count());
+
+        return new ResponseEntity<>(bookclubDto, HttpStatus.OK);
     }
 }
