@@ -1,21 +1,44 @@
 package com.emmett.bookclub.domain.bookclub;
 
+import com.emmett.bookclub.domain.bookpost.files.PostFilesService;
+import com.emmett.bookclub.domain.model.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class BookclubServiceImpl implements BookclubService {
-    private BookclubRepository bookclubRepository;
+    private final BookclubRepository bookclubRepository;
+    private final PostFilesService postFilesService;
+
+    @Override
+    public ResponseEntity<List<BookclubDto>> getBookclubList() {
+        List<BookclubDto> list = bookclubRepository.findBookclubList()
+                .stream()
+                .map(bookclub ->{
+                    BookclubDto bookclubDto = new BookclubDto(bookclub);
+                    bookclubDto.setThumbnail(postFilesService.getDownloadFileUri(bookclubDto.getThumbnail()));
+                    return bookclubDto;
+                })
+                .collect(Collectors.collectingAndThen(Collectors.toList(), result -> {
+                    if(result.isEmpty())throw new NotFoundException("북클럽 멤버가 존재하지 않습니다.");
+                    return result;
+                }));
+
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 
     @Override
     public ResponseEntity<List<Map<String, Object>>> searchBookclub(String keyword) {
         // TODO://add ~NotClosedYn(true)
+        if(!StringUtils.hasText(keyword))keyword = "";
         List<Bookclub> list = bookclubRepository.findByClubNmOrClubLocOrClubIntroOrderByClubNmAsc(keyword, keyword, keyword);
 
         List<Map<String, Object>> result = new ArrayList<>();

@@ -19,6 +19,15 @@ public class BookclubController {
      * Description:
      */
     @GetMapping("/list")
+    public ResponseEntity<List<BookclubDto>> getBookclubList() {
+        return bookclubService.getBookclubList();
+    }
+
+    /**
+     * Subject: 북클럽 목록 검색
+     * Description:
+     */
+    @GetMapping("/search")
     public ResponseEntity<List<Map<String, Object>>> searchBookclub(@RequestParam String keyword) {
         return bookclubService.searchBookclub(keyword);
     }
