@@ -60,11 +60,11 @@ public class BookclubController {
     }
 
     /**
-     * Subject: 북클럽 목록 조회
+     * Subject: 북클럽 조회
      * Description:
      */
     @GetMapping("/{clubId}")
-    public ResponseEntity<Map<String, Object>> getBookclubDetail(@PathVariable String clubId) {
+    public ResponseEntity<BookclubDto> getBookclubDetail(@PathVariable String clubId) {
         return bookclubService.getBookclubDetail(clubId);
     }
 }

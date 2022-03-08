@@ -18,5 +18,5 @@ public interface BookclubService {
 
     ResponseEntity<String> closeBookclub();
 
-    ResponseEntity<Map<String, Object>> getBookclubDetail(String clubId);
+    ResponseEntity<BookclubDto> getBookclubDetail(String clubId);
 }

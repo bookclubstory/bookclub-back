@@ -1,7 +1,9 @@
 package com.emmett.bookclub.domain.bookclub;
 
+import com.emmett.bookclub.domain.bookclub.member.BookclubMember;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -11,6 +13,7 @@ import java.util.Optional;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class BookclubDto implements Serializable{
     private static final String CLUB_ID = "clubId";
     private static final String CLUB_NM = "clubNm";
@@ -20,6 +23,8 @@ public class BookclubDto implements Serializable{
     private static final String PRIVATE_YN = "privateYn";
     private static final String CLUB_INTRO= "clubIntro";
     private static final String THUMBNAIL = "thumbnail";
+    private static final String FILE_NAME = "file_name";
+    private static final String FILE_EXT = "file_ext";
 
     String clubId;
     String clubNm;
@@ -29,6 +34,10 @@ public class BookclubDto implements Serializable{
     Boolean privateYn;
     String clubIntro;
     String thumbnail;
+    String fileName;
+    String fileExt;
+
+    BookclubMember owner;
 
     public BookclubDto(Map<String, Object> values) {
         this.clubId = String.valueOf(Optional.ofNullable(values.get(CLUB_ID)).orElse(""));
@@ -39,5 +48,7 @@ public class BookclubDto implements Serializable{
         this.privateYn = (Boolean) Optional.ofNullable(values.get(CLUB_LOC)).orElse(false);
         this.clubIntro = String.valueOf(Optional.ofNullable(values.get(CLUB_INTRO)).orElse(""));
         this.thumbnail = String.valueOf(Optional.ofNullable(values.get(THUMBNAIL)).orElse(""));
+        this.fileName = String.valueOf(Optional.ofNullable(values.get(FILE_NAME)).orElse(""));
+        this.fileExt = String.valueOf(Optional.ofNullable(values.get(FILE_EXT)).orElse(""));
     }
 }
