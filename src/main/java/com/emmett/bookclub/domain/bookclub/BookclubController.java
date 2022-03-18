@@ -3,6 +3,7 @@ package com.emmett.bookclub.domain.bookclub;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,9 @@ public class BookclubController {
      * Description:
      */
     @PostMapping
-    public ResponseEntity<String> addBookclub(@RequestBody BookclubDto bookclubDto) {
+    public ResponseEntity<String> addBookclub(@RequestPart(value = "data") BookclubDto bookclubDto,
+                                              @RequestPart(value = "file", required = false) MultipartFile file) {
+        bookclubDto.setFile(file);
         return bookclubService.addBookclub(bookclubDto);
     }
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -38,6 +39,7 @@ public class BookclubDto implements Serializable{
     String fileExt;
 
     BookclubMember owner;
+    MultipartFile file;
 
     public BookclubDto(Map<String, Object> values) {
         this.clubId = String.valueOf(Optional.ofNullable(values.get(CLUB_ID)).orElse(""));
@@ -45,7 +47,7 @@ public class BookclubDto implements Serializable{
         this.clubLoc = String.valueOf(Optional.ofNullable(values.get(CLUB_LOC)).orElse(""));
         this.memberCnt = (Long) Optional.ofNullable(values.get(MEMBER_CNT)).orElse(0);
         this.totMemberCnt = (Integer) Optional.ofNullable(values.get(TOT_MEMBER_CNT)).orElse(0);
-        this.privateYn = (Boolean) Optional.ofNullable(values.get(CLUB_LOC)).orElse(false);
+        this.privateYn = (Boolean) Optional.ofNullable(values.get(PRIVATE_YN)).orElse(false);
         this.clubIntro = String.valueOf(Optional.ofNullable(values.get(CLUB_INTRO)).orElse(""));
         this.thumbnail = String.valueOf(Optional.ofNullable(values.get(THUMBNAIL)).orElse(""));
         this.fileName = String.valueOf(Optional.ofNullable(values.get(FILE_NAME)).orElse(""));
