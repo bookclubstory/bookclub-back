@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "TB_BOOKCLUB_MEMBER")
 public class BookclubMember implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     int memberId;
 
@@ -54,4 +55,15 @@ public class BookclubMember implements Serializable {
     @JoinColumn(name = "club_id", insertable = false, updatable = false)
     @JsonIgnore
     Bookclub bookclub;
+
+    public BookclubMember addMember(String clubId, String username, String clubAuth,
+                                    LocalDateTime clubJoinDate,  String createdBy, String modifiedBy){
+        this.clubId = clubId;
+        this.username = username;
+        this.clubAuth = clubAuth;
+        this.clubJoinDate = clubJoinDate;
+        this.createdBy = createdBy;
+        this.modifiedBy = modifiedBy;
+        return this;
+    }
 }
