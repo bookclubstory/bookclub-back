@@ -11,24 +11,9 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/code")
+@RequestMapping("/api/v1/code")
 public class CodeController {
     private final CodeService codeService;
-
-    @GetMapping("/time-grain")
-    public List<Map<String, Object>> getTimeGrainCode() {
-        return codeService.getTimeGrainCodeLists();
-    }
-
-    @GetMapping("/row-limit")
-    public List<Map<String, Object>> getLimitedRowCountList() {
-        return codeService.getLimitedRowCountList();
-    }
-
-    @GetMapping("/query-filter")
-    public List<Map<String, Object>> getQueryFilterList() {
-        return codeService.getQueryFilterList();
-    }
 
     @GetMapping()
     public List<Map<String, Object>> getCodeList(@RequestParam String code) {

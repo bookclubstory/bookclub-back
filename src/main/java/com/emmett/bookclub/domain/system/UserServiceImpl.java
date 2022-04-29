@@ -51,40 +51,51 @@ public class UserServiceImpl implements UserService {
     @Override
     @Modifying
     public ResponseEntity<UserDto> signUp(UserDto userDto) {
-        // valid email
-        userRepository.findByEmail(userDto.getEmail()).ifPresent(c -> {
-            throw new RuntimeException("This email address(" + userDto.getEmail() + ") is already registered...");
+        String loginId = util.getLoginId();
+        if (StringUtils.isBlank(loginId)) {
+            loginId = "system";
+        }
+
+        String email = userDto.getEmail();
+        String username = email.substring(0, email.indexOf("@"));
+        userRepository.findByEmail(email).ifPresent(c -> {
+            throw new RuntimeException("Email(" + email + ") is already registered...");
         });
 
-        String username = userDto.getUsername();
-        List<User> usernameList = userRepository.findByUsername(username);
-
+        List<User> usernameList = userRepository.findByUsernameContains(username);
         if(usernameList.size() > 0) {
-            int usernameCount = usernameList.size();
-            username = username + usernameCount++;
+            username += usernameList.size();
         }
-        try {
-            // 1st save User without userRoles
-            User user = new User();
-            user.signUp(
-                    userDto.getUsername(),
-                    passwordEncoder.encode(userDto.getPassword()),
-                    userDto.getEmail(),
-                    "system",
-                    LocalDateTime.now());
-            userRepository.save(user);
 
-            // 2nd save UserRole
+        try {
             UserRole userRole = new UserRole();
-            userRole.newUserRole(
-                    userDto.getUsername(),
+            userRole.newUserRole(username,
                     "USER",
-                    "system",
-                    LocalDateTime.now()
-            );
+                    loginId,
+                    LocalDateTime.now());
             userRoleRepository.save(userRole);
+
+            List<UserRole> newRoles = new ArrayList<>();
+            newRoles.add(userRole);
+
+            User newUser = new User();
+            newUser.newUser(
+                    username,
+                    passwordEncoder.encode(userDto.getPassword()),
+                    userDto.getFirstName(),
+                    "",
+                    "",
+                    userDto.getEmail(),
+                    newRoles,
+                    "",
+                    "",
+                    1,
+                    loginId,
+                    LocalDateTime.now());
+            userRepository.save(newUser);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
 
         return new ResponseEntity<>(userDto, HttpStatus.OK);
@@ -98,50 +109,49 @@ public class UserServiceImpl implements UserService {
             loginId = "system";
         }
 
-        // valid email
-        userRepository.findByEmail(userDto.getEmail()).ifPresent(c -> {
-            throw new RuntimeException("This email address(" + userDto.getEmail() + ") is already registered...");
+        String email = userDto.getEmail();
+        String username = email.substring(0, email.indexOf("@"));
+        userRepository.findByEmail(email).ifPresent(c -> {
+            throw new RuntimeException("Email(" + email + ") is already registered...");
         });
 
-        String username = userDto.getUsername();
-        List<User> usernameList = userRepository.findByUsername(username);
-
+        List<User> usernameList = userRepository.findByUsernameContains(username);
         if(usernameList.size() > 0) {
-            int usernameCount = usernameList.size();
-            username = username + usernameCount++;
+            username += usernameList.size();
         }
+
         try {
-            // 1. add User data
-            User user = new User();
-            user.newUser(
-                    userDto.getUsername(),
-                    passwordEncoder.encode(userDto.getPassword()),
-                    userDto.getFirstName(),
-                    userDto.getLastName(),
-                    userDto.getTel(),
-                    userDto.getEmail(),
-                    userDto.getAddress1(),
-                    userDto.getAddress2(),
-                    userDto.getIsValid(),
-                    loginId,
-                    LocalDateTime.now());
-            userRepository.save(user);
+            String finalLoginId = loginId;
+            userRepository.findByUsername(userDto.getUsername()).ifPresent(c -> {
+                List<UserRole> newRoles = new ArrayList<>();
+                for (String role :
+                        userDto.getRoles()) {
+                    UserRole userRole = new UserRole();
+                    userRole.newUserRole(c.getUsername(),
+                            role,
+                            finalLoginId,
+                            LocalDateTime.now());
+                    userRoleRepository.save(userRole);
 
-            List<UserRole> userRoles = new ArrayList<>();
-            for (String role :
-                    userDto.getRoles()) {
-                // 2. add UserRole
-                Optional<User> newUser = userRepository.findByEmail(userDto.getEmail());
-                UserRole userRole = new UserRole();
-                userRole.newUserRole(newUser.get().getUsername(),
-                        role,
-                        loginId,
+                    newRoles.add(userRole);
+                }
+
+                User newUser = new User();
+                newUser.newUser(
+                        userDto.getUsername(),
+                        passwordEncoder.encode(userDto.getPassword()),
+                        userDto.getFirstName(),
+                        userDto.getLastName(),
+                        userDto.getTel(),
+                        userDto.getEmail(),
+                        newRoles,
+                        userDto.getAddress1(),
+                        userDto.getAddress2(),
+                        userDto.getIsValid(),
+                        finalLoginId,
                         LocalDateTime.now());
-                userRoleRepository.save(userRole);
-
-                userRoles.add(userRole);
-            }
-
+                userRepository.save(newUser);
+            });
 
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
