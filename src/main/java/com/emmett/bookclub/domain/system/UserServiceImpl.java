@@ -28,6 +28,8 @@ import io.micrometer.core.instrument.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -67,7 +69,17 @@ public class UserServiceImpl implements UserService {
             username += usernameList.size();
         }
 
+        /* 관심 주제 */
+        StringBuilder topicList = new StringBuilder();
+        topicList.append(userDto.getTopics());
+        /* 관심 지역 */
+        StringBuilder townList = new StringBuilder();
+        townList.append(userDto.getTowns());
+
         try {
+            /*
+            * 1. add UserRole
+            * */
             UserRole userRole = new UserRole();
             userRole.newUserRole(username,
                     "USER",
@@ -78,8 +90,11 @@ public class UserServiceImpl implements UserService {
             List<UserRole> newRoles = new ArrayList<>();
             newRoles.add(userRole);
 
+            /*
+            * 2. add User
+            * */
             User newUser = new User();
-            newUser.newUser(
+            newUser.signup(
                     username,
                     passwordEncoder.encode(userDto.getPassword()),
                     userDto.getFirstName(),
@@ -89,6 +104,9 @@ public class UserServiceImpl implements UserService {
                     newRoles,
                     "",
                     "",
+                    userDto.getBirthDate().substring(0, 10).replaceAll("-", ""),
+                    topicList.toString(),
+                    townList.toString(),
                     1,
                     loginId,
                     LocalDateTime.now());
