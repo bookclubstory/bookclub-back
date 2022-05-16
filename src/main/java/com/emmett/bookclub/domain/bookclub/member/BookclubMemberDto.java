@@ -1,9 +1,19 @@
 package com.emmett.bookclub.domain.bookclub.member;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-@Getter
-@Setter
-public class BookclubMemberDto {
+import java.time.LocalDateTime;
+
+public interface BookclubMemberDto {
+    Integer getMemberId();
+    String getClubId();
+    String getUsername();
+    String getLastName();
+    String getFirstName();
+    String getEmail();
+    String getClubAuth();
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime getClubJoinDate();
+    Integer getSessionCnt();
+    Boolean getIsEnabled();
 }

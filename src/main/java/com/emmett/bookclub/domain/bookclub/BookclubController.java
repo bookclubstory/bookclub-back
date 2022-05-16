@@ -3,6 +3,7 @@ package com.emmett.bookclub.domain.bookclub;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,15 @@ public class BookclubController {
      * Description:
      */
     @GetMapping("/list")
+    public ResponseEntity<List<BookclubDto>> getBookclubList() {
+        return bookclubService.getBookclubList();
+    }
+
+    /**
+     * Subject: 북클럽 목록 검색
+     * Description:
+     */
+    @GetMapping("/search")
     public ResponseEntity<List<Map<String, Object>>> searchBookclub(@RequestParam String keyword) {
         return bookclubService.searchBookclub(keyword);
     }
@@ -28,7 +38,9 @@ public class BookclubController {
      * Description:
      */
     @PostMapping
-    public ResponseEntity<String> addBookclub(@RequestBody BookclubDto bookclubDto) {
+    public ResponseEntity<String> addBookclub(@RequestPart(value = "data") BookclubDto bookclubDto,
+                                              @RequestPart(value = "file", required = false) MultipartFile file) {
+        bookclubDto.setFile(file);
         return bookclubService.addBookclub(bookclubDto);
     }
 
@@ -51,11 +63,11 @@ public class BookclubController {
     }
 
     /**
-     * Subject: 북클럽 목록 조회
+     * Subject: 북클럽 조회
      * Description:
      */
     @GetMapping("/{clubId}")
-    public ResponseEntity<Map<String, Object>> getBookclubDetail(@PathVariable String clubId) {
+    public ResponseEntity<BookclubDto> getBookclubDetail(@PathVariable String clubId) {
         return bookclubService.getBookclubDetail(clubId);
     }
 }
