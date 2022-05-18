@@ -148,10 +148,20 @@ public class User {
     }
 
     @Builder
-    public User signUp(String username, String password, String email, String createdBy, LocalDateTime creationDate) {
+    public User signup(String username, String password, String firstName, String lastName, String tel, String email, List<UserRole> roles, String address1, String address2, String attribute1, String attribute2, String attribute3, int isValid, String createdBy, LocalDateTime creationDate) {
         this.username = username;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.tel = tel;
         this.email = email;
+        this.roles = roles;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.attribute1 = attribute1;
+        this.attribute2 = attribute2;
+        this.attribute3 = attribute3;
+        this.isValid = isValid;
         this.createdBy = createdBy;
         this.creationDate = creationDate;
 

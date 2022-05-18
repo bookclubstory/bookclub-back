@@ -26,21 +26,6 @@ public class CodeServiceImpl implements CodeService {
     }
 
     @Override
-    public List<Map<String, Object>> getTimeGrainCodeLists() {
-        return this.getKeyValuePair("TIME_GRAIN");
-    }
-
-    @Override
-    public List<Map<String, Object>> getLimitedRowCountList() {
-        return this.getKeyValuePair("ROW_LIMIT");
-    }
-
-    @Override
-    public List<Map<String, Object>> getQueryFilterList() {
-        return this.getKeyValuePair("QUERY_FILTERS");
-    }
-
-    @Override
     public List<Map<String, Object>> getCodeList(String code) {
         return this.getKeyValuePair(code);
     }

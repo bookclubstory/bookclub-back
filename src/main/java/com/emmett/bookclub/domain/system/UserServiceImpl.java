@@ -28,6 +28,8 @@ import io.micrometer.core.instrument.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -51,32 +53,67 @@ public class UserServiceImpl implements UserService {
     @Override
     @Modifying
     public ResponseEntity<UserDto> signUp(UserDto userDto) {
-        userRepository.findByUsername(userDto.getUsername()).ifPresent(c -> {
-            throw new RuntimeException("User Name(" + userDto.getUsername() + ") is already registered...");
+        String loginId = util.getLoginId();
+        if (StringUtils.isBlank(loginId)) {
+            loginId = "system";
+        }
+
+        String email = userDto.getEmail();
+        String username = email.substring(0, email.indexOf("@"));
+        userRepository.findByEmail(email).ifPresent(c -> {
+            throw new RuntimeException("Email(" + email + ") is already registered...");
         });
 
-        try {
-            // 1st save User without userRoles
-            User user = new User();
-            user.signUp(
-                    userDto.getUsername(),
-                    passwordEncoder.encode(userDto.getPassword()),
-                    userDto.getEmail(),
-                    "system",
-                    LocalDateTime.now());
-            userRepository.save(user);
+        List<User> usernameList = userRepository.findByUsernameContains(username);
+        if(usernameList.size() > 0) {
+            username += usernameList.size();
+        }
 
-            // 2nd save UserRole
+        /* 관심 주제 */
+        StringBuilder topicList = new StringBuilder();
+        topicList.append(userDto.getTopics());
+        /* 관심 지역 */
+        StringBuilder townList = new StringBuilder();
+        townList.append(userDto.getTowns());
+
+        try {
+            /*
+            * 1. add UserRole
+            * */
             UserRole userRole = new UserRole();
-            userRole.newUserRole(
-                    userDto.getUsername(),
+            userRole.newUserRole(username,
                     "USER",
-                    "system",
-                    LocalDateTime.now()
-            );
+                    loginId,
+                    LocalDateTime.now());
             userRoleRepository.save(userRole);
+
+            List<UserRole> newRoles = new ArrayList<>();
+            newRoles.add(userRole);
+
+            /*
+            * 2. add User
+            * */
+            User newUser = new User();
+            newUser.signup(
+                    username,
+                    passwordEncoder.encode(userDto.getPassword()),
+                    userDto.getFirstName(),
+                    "",
+                    "",
+                    userDto.getEmail(),
+                    newRoles,
+                    "",
+                    "",
+                    userDto.getBirthDate().substring(0, 10).replaceAll("-", ""),
+                    topicList.toString(),
+                    townList.toString(),
+                    1,
+                    loginId,
+                    LocalDateTime.now());
+            userRepository.save(newUser);
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
 
         return new ResponseEntity<>(userDto, HttpStatus.OK);
@@ -89,38 +126,50 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.isBlank(loginId)) {
             loginId = "system";
         }
-        userRepository.findByUsername(userDto.getUsername()).ifPresent(c -> {
-            throw new RuntimeException("User Name(" + userDto.getUsername() + ") is already registered...");
+
+        String email = userDto.getEmail();
+        String username = email.substring(0, email.indexOf("@"));
+        userRepository.findByEmail(email).ifPresent(c -> {
+            throw new RuntimeException("Email(" + email + ") is already registered...");
         });
+
+        List<User> usernameList = userRepository.findByUsernameContains(username);
+        if(usernameList.size() > 0) {
+            username += usernameList.size();
+        }
+
         try {
-            List<UserRole> userRoles = new ArrayList<>();
-            for (String role :
-                    userDto.getRoles()) {
-                UserRole userRole = new UserRole();
-                userRole.newUserRole(userDto.getUsername(),
-                        role,
-                        loginId,
+            String finalLoginId = loginId;
+            userRepository.findByUsername(userDto.getUsername()).ifPresent(c -> {
+                List<UserRole> newRoles = new ArrayList<>();
+                for (String role :
+                        userDto.getRoles()) {
+                    UserRole userRole = new UserRole();
+                    userRole.newUserRole(c.getUsername(),
+                            role,
+                            finalLoginId,
+                            LocalDateTime.now());
+                    userRoleRepository.save(userRole);
+
+                    newRoles.add(userRole);
+                }
+
+                User newUser = new User();
+                newUser.newUser(
+                        userDto.getUsername(),
+                        passwordEncoder.encode(userDto.getPassword()),
+                        userDto.getFirstName(),
+                        userDto.getLastName(),
+                        userDto.getTel(),
+                        userDto.getEmail(),
+                        newRoles,
+                        userDto.getAddress1(),
+                        userDto.getAddress2(),
+                        userDto.getIsValid(),
+                        finalLoginId,
                         LocalDateTime.now());
-                userRoleRepository.save(userRole);
-
-                userRoles.add(userRole);
-            }
-
-            User user = new User();
-            user.newUser(
-                    userDto.getUsername(),
-                    passwordEncoder.encode(userDto.getPassword()),
-                    userDto.getFirstName(),
-                    userDto.getLastName(),
-                    userDto.getTel(),
-                    userDto.getEmail(),
-                    userRoles,
-                    userDto.getAddress1(),
-                    userDto.getAddress2(),
-                    userDto.getIsValid(),
-                    loginId,
-                    LocalDateTime.now());
-            userRepository.save(user);
+                userRepository.save(newUser);
+            });
 
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -151,20 +200,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<AuthToken> login(UserDto userDto, HttpSession session, HttpServletRequest request) {
         try {
-            String loginId = userDto.getUsername();
+            /*String loginId = userDto.getUsername();
+            Optional<User> user = userRepository.findById(loginId);*/
+            String loginId = userDto.getEmail();
+            Optional<User> user = userRepository.findByEmail(loginId);
+
+            String username = user.get().getUsername();
             String loginPw = userDto.getPassword();
             String loginToken = userDto.getToken();
 
-            Optional<User> user = userRepository.findByUsername(loginId);
 
             Optional<AuthToken> result =
                     user.map(obj -> {
                         // 1. username, password를 조합하여 UsernamePasswordAuthenticationToken 생성
-                        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginId, loginPw);
+                        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, loginPw);
                         if (loginToken != null) {
                             // Create Granted Authority Rules
                             Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-                            token = new UsernamePasswordAuthenticationToken(loginId, null, grantedAuthorities);
+                            token = new UsernamePasswordAuthenticationToken(username, null, grantedAuthorities);
                         } else {
                             // Form login
                             // 2. Form 로그인 검증을 위해 UsernamePasswordAuthenticationToken 을 authenticationManager 의 인스턴스로 전달
@@ -181,7 +234,7 @@ public class UserServiceImpl implements UserService {
                         /* login success */
                         LoginHistory loginHistory = new LoginHistory(
                                 logId,
-                                loginId,
+                                username,
                                 clientIp,
                                 userDto.getConnectMethod(),
                                 "",
@@ -192,14 +245,14 @@ public class UserServiceImpl implements UserService {
 
                         if (!StringUtils.isEmpty(userDto.getAttribute1())) {
                             /* from mobile */
-                            userRepository.findByUsername(loginId).ifPresent(c -> {
+                            userRepository.findById(obj.getUsername()).ifPresent(c -> {
                                 c.updateAttribute1(userDto.getAttribute1());
 
                                 // save Mobile token (String value)
                                 userRepository.save(c);
                             });
                         }
-                        return getAuthToken(session, loginId, obj, token);
+                        return getAuthToken(session, username, obj, token);
                     });
 
             return result.map(authToken -> new ResponseEntity<>(authToken, HttpStatus.OK))
@@ -248,7 +301,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> resetPassword(UserDto userDto) {
-        userRepository.findByUsername(util.getLoginId()).ifPresent(c -> {
+        userRepository.findById(util.getLoginId()).ifPresent(c -> {
             c.resetPassword(passwordEncoder.encode(userDto.getPassword()));
 
             userRepository.save(c);
@@ -262,7 +315,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<UserDto> updateUser(UserDto userDto) {
         String loginId = util.getLoginId();
 
-        userRepository.findByUsername(loginId).ifPresent(c -> {
+        userRepository.findById(loginId).ifPresent(c -> {
             c.updatePersonalUserInfo(userDto.getFirstName(),
                     userDto.getLastName(),
                     userDto.getTel(),
@@ -330,7 +383,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<UserDto> getUserDetail(String username) {
         UserDto userDto = new UserDto();
-        userRepository.findByUsername(username).ifPresent(c -> {
+        userRepository.findById(username).ifPresent(c -> {
             userDto.setUsername(username);
             userDto.setFirstName(c.getFirstName());
             userDto.setLastName(c.getLastName());
@@ -360,7 +413,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             String finalLoginId = loginId;
-            userRepository.findByUsername(userDto.getUsername()).ifPresent(c -> {
+            userRepository.findById(userDto.getUsername()).ifPresent(c -> {
                 //1. process user data (edit User)
                 c.editUser(userDto.getFirstName(),
                         userDto.getLastName(),
@@ -391,54 +444,6 @@ public class UserServiceImpl implements UserService {
 
         } catch (DataIntegrityViolationException e) {
             e.printStackTrace();
-        }
-
-        return new ResponseEntity<>(userDto, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<UserDto> registerUser(UserDto userDto) {
-        String loginId = util.getLoginId();
-        if (StringUtils.isBlank(loginId)) {
-            loginId = "system";
-        }
-
-        String email = userDto.getEmail();
-        String username = email.substring(0, email.indexOf("@"));
-        userRepository.findByUsername(username).ifPresent(c -> {
-            throw new RuntimeException("User Name(" + username + ") is already registered...");
-        });
-
-        try {
-            UserRole userRole = new UserRole();
-            userRole.newUserRole(username,
-                    "USER",
-                    loginId,
-                    LocalDateTime.now());
-            userRoleRepository.save(userRole);
-
-            List<UserRole> newRoles = new ArrayList<>();
-            newRoles.add(userRole);
-
-            User newUser = new User();
-            newUser.newUser(
-                    username,
-                    passwordEncoder.encode(userDto.getPassword()),
-                    userDto.getName(),
-                    "",
-                    "",
-                    userDto.getEmail(),
-                    newRoles,
-                    "",
-                    "",
-                    1,
-                    loginId,
-                    LocalDateTime.now());
-            userRepository.save(newUser);
-
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
 
         return new ResponseEntity<>(userDto, HttpStatus.OK);

@@ -10,13 +10,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class PostFilesServiceImpl implements PostFilesService {
+public class PostFileServiceImpl implements PostFileService {
     private final Path fileStorageLocation;
-    private final PostFilesRepository postFilesRepository;
+    private final PostFileRepository postFileRepository;
 
     @Value("/api/v1/bookpost/files/download/")
     private String IMG_API;
@@ -30,14 +31,20 @@ public class PostFilesServiceImpl implements PostFilesService {
             originalFileName = this.getFileName(boardFileId);
         }
 
-        resource = this.loadFileAsResource(originalFileName);
+        resource = this.loadFileAsResource(originalFileName, boardFileId);
 
         return resource;
     }
 
     @Override
-    public Resource loadFileAsResource(String fileName) {
-        Path filePath = fileStorageLocation.resolve(fileName).normalize();
+    public Resource loadFileAsResource(String fileName, Integer boardFileId) {
+        String uploadPath = "";
+        Optional<PostFile> postFile = postFileRepository.findById(boardFileId);
+        if (postFile.isPresent()) {
+            uploadPath = postFile.get().getFilePath();
+        }
+        //Path filePath = fileStorageLocation.resolve(uploadPath).normalize();
+        Path filePath = Paths.get(fileStorageLocation.toString() + "/" + uploadPath);
         
         try {
             Resource resource = new UrlResource(filePath.toUri());
@@ -56,7 +63,7 @@ public class PostFilesServiceImpl implements PostFilesService {
 
     @Override
     public String getFileName(Integer boardFileId) {
-        Optional<PostFiles> postFile = postFilesRepository.findById(boardFileId);
+        Optional<PostFile> postFile = postFileRepository.findById(boardFileId);
         return postFile.map(file -> file.fileName)
                 .orElse("fileNameError");
     }

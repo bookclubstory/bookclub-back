@@ -15,10 +15,4 @@ public class BookclubApiApplication {
 		SpringApplication.run(BookclubApiApplication.class, args);
 	}
 
-	@GetMapping("/test")
-	public String index(HttpSession session) {
-		//return session.getId() + "\nHello " + session.getAttribute("name");
-		return "Hello, World \n Session ID : " + session.getId();
-	}
-
 }

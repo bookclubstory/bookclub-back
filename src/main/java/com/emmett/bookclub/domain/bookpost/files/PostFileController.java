@@ -16,8 +16,8 @@ import java.net.URLEncoder;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/bookpost/files")
-public class PostFilesController {
-    private final PostFilesService postFilesService;
+public class PostFileController {
+    private final PostFileService postFileService;
 
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName
@@ -29,7 +29,7 @@ public class PostFilesController {
         String originalFileName = null;
 
         try {
-            resource = postFilesService.getDownloadFile(fileName, boardFileId);
+            resource = postFileService.getDownloadFile(fileName, boardFileId);
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
             originalFileName = resource.getFile().getName();
 
@@ -37,18 +37,18 @@ public class PostFilesController {
             ex.printStackTrace();
         }
 
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = "application/octet-stream";
         }
 
         HttpHeaders headers = new HttpHeaders();
 
-        if(contentType == "application/pdf"){
+        if (contentType == "application/pdf") {
             contentType += "; charset=UTF-8";
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + URLEncoder.encode(originalFileName, "UTF-8") + "\"");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
 
-        }else{
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(originalFileName, "UTF-8") + "\"");
+        } else {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
         }
 
         headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition");
