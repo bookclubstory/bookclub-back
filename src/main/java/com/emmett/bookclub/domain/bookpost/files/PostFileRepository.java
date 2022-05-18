@@ -8,4 +8,6 @@ import java.util.Optional;
 @Repository
 public interface PostFileRepository extends JpaRepository<PostFile, Integer> {
     Optional<PostFile> findById(Integer boardFileId);
+
+    Optional<PostFile> findByPostIdAndFileOrder(String postId, int fileOrder);
 }

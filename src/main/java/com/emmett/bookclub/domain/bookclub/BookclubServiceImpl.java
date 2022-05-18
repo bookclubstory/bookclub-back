@@ -3,7 +3,7 @@ package com.emmett.bookclub.domain.bookclub;
 import com.emmett.bookclub.domain.bookclub.member.BookclubMember;
 import com.emmett.bookclub.domain.bookclub.member.BookclubMemberRepository;
 import com.emmett.bookclub.domain.bookclub.member.ClubAuth;
-import com.emmett.bookclub.domain.bookpost.files.PostFilesService;
+import com.emmett.bookclub.domain.bookpost.files.PostFileService;
 import com.emmett.bookclub.domain.model.exception.NotFoundException;
 import com.emmett.bookclub.global.file.FileDto;
 import com.emmett.bookclub.global.file.FileService;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class BookclubServiceImpl implements BookclubService {
     private final BookclubRepository bookclubRepository;
     private final BookclubMemberRepository bookclubMemberRepository;
-    private final PostFilesService postFilesService;
+    private final PostFileService postFileService;
     private final FileService fileService;
     private final Util util;
 
@@ -35,7 +35,7 @@ public class BookclubServiceImpl implements BookclubService {
                 .stream()
                 .map(bookclub ->{
                     BookclubDto bookclubDto = new BookclubDto(bookclub);
-                    bookclubDto.setThumbnail(postFilesService.getDownloadFileUri(bookclubDto.getThumbnail()));
+                    bookclubDto.setThumbnail(postFileService.getDownloadFileUri(bookclubDto.getThumbnail()));
                     return bookclubDto;
                 })
                 .collect(Collectors.collectingAndThen(Collectors.toList(), result -> {
@@ -137,7 +137,7 @@ public class BookclubServiceImpl implements BookclubService {
         bookclubDto.setClubIntro(bookclub.getClubIntro());
         bookclubDto.setFileName(bookclub.getFileName());
         bookclubDto.setFileExt(bookclub.getFileExt());
-        bookclubDto.setThumbnail(postFilesService.getDownloadFileUri(bookclub.getThumbnail()));
+        bookclubDto.setThumbnail(postFileService.getDownloadFileUri(bookclub.getThumbnail()));
 
         List<BookclubMember> bookclubMembers = bookclub.getBookclubMembers();
         BookclubMember owner = bookclub.getBookclubMembers()

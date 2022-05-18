@@ -10,7 +10,7 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/role")
+@RequestMapping("/api/v1/role")
 public class RoleController {
     private final RoleService roleService;
 

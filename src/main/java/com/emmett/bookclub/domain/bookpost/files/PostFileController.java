@@ -37,18 +37,18 @@ public class PostFileController {
             ex.printStackTrace();
         }
 
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = "application/octet-stream";
         }
 
         HttpHeaders headers = new HttpHeaders();
 
-        if(contentType == "application/pdf"){
+        if (contentType == "application/pdf") {
             contentType += "; charset=UTF-8";
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + URLEncoder.encode(originalFileName, "UTF-8") + "\"");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
 
-        }else{
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(originalFileName, "UTF-8") + "\"");
+        } else {
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + URLEncoder.encode(fileName, "UTF-8") + "\"");
         }
 
         headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition");

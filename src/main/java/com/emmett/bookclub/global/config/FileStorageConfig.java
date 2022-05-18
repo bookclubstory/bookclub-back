@@ -20,9 +20,12 @@ public class FileStorageConfig {
     @Value("${file.upload-dir}")
     String uploadDir;
 
+    @Value("${file.upload-root}")
+    String uploadRoot;
+
     @Bean
     public Path fileStorageLocation() throws IOException {
-        Path fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path fileStorageLocation = Paths.get(uploadRoot).toAbsolutePath().normalize();
         return Files.createDirectories(fileStorageLocation);
     }
 }

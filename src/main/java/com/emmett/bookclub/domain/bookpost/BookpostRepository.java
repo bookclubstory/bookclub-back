@@ -10,32 +10,32 @@ import java.util.List;
 
 @Repository
 public interface BookpostRepository extends JpaRepository<Bookpost, String> {
-    @Query("select " +
-            "b.boardId, " +
-            "b.postId, " +
-            "b.title, " +
-            "f.boardFileId, " +
-            "f.fileName," +
-            "b.createdBy, " +
-            "b.creationDate, " +
-            "b.modifiedBy, " +
-            "b.modifiedDate " +
-            "from Bookpost b left join PostFile f on b.postId = f.postId and f.fileOrder = 1 " +
-            "order by b.postId desc")
+    @Query(" SELECT b.boardId" +
+            "       ,b.postId" +
+            "       ,b.title" +
+            "       ,f.boardFileId" +
+            "       ,f.fileOrder" +
+            "       ,f.fileName" +
+            "       ,b.createdBy" +
+            "       ,b.creationDate" +
+            "       ,b.modifiedBy" +
+            "       ,b.modifiedDate" +
+            "  FROM Bookpost b LEFT JOIN PostFile f ON b.postId = f.postId AND f.fileOrder = 1" +
+            " ORDER BY b.postId DESC")
     List<Object[]> getBookpostRprsImgList();
 
-    @Query("select " +
-            "b.boardId, " +
-            "b.postId, " +
-            "b.title, " +
-            "f.boardFileId, " +
-            "f.fileName," +
-            "b.createdBy, " +
-            "b.creationDate, " +
-            "b.modifiedBy, " +
-            "b.modifiedDate " +
-            "from Bookpost b left join PostFile f on b.postId = f.postId and f.fileOrder = 1 " +
-            "order by b.postId desc")
+    @Query(" SELECT b.boardId" +
+            "       ,b.postId" +
+            "       ,b.title" +
+            "       ,f.boardFileId" +
+            "       ,f.fileOrder" +
+            "       ,f.fileName" +
+            "       ,b.createdBy" +
+            "       ,b.creationDate" +
+            "       ,b.modifiedBy" +
+            "       ,b.modifiedDate" +
+            "  FROM Bookpost b LEFT JOIN PostFile f ON b.postId = f.postId AND f.fileOrder = 1" +
+            " ORDER BY b.postId DESC")
     Page<Object[]> getBookpostRprsImgList(Pageable pageable);
 
     List<Bookpost> findByPostIdContains(String postId);

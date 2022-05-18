@@ -12,19 +12,21 @@ public class BookpostDto implements Serializable {
     int boardId;
     String postId;
     String title;
-    String rprsImage;
+    String boardFileId;
+    int fileOrder;
     String rprsImageUrl;
     String createdBy;
     LocalDateTime creationDate;
     String modifiedBy;
     LocalDateTime modifiedDate;
 
-    public BookpostDto(int boardId, String postId, String title, String rprsImage, String rprsImageUrl,
-                       String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate){
+    public BookpostDto(int boardId, String postId, String title, String boardFileId, int fileOrder, String rprsImageUrl,
+                       String createdBy, LocalDateTime creationDate, String modifiedBy, LocalDateTime modifiedDate) {
         this.boardId = boardId;
         this.postId = postId;
         this.title = title;
-        this.rprsImage = rprsImage;
+        this.boardFileId = boardFileId;
+        this.fileOrder = fileOrder;
         this.rprsImageUrl = rprsImageUrl;
         this.createdBy = createdBy;
         this.creationDate = creationDate;

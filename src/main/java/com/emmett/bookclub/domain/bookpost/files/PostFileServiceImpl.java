@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -30,14 +31,20 @@ public class PostFileServiceImpl implements PostFileService {
             originalFileName = this.getFileName(boardFileId);
         }
 
-        resource = this.loadFileAsResource(originalFileName);
+        resource = this.loadFileAsResource(originalFileName, boardFileId);
 
         return resource;
     }
 
     @Override
-    public Resource loadFileAsResource(String fileName) {
-        Path filePath = fileStorageLocation.resolve(fileName).normalize();
+    public Resource loadFileAsResource(String fileName, Integer boardFileId) {
+        String uploadPath = "";
+        Optional<PostFile> postFile = postFileRepository.findById(boardFileId);
+        if (postFile.isPresent()) {
+            uploadPath = postFile.get().getFilePath();
+        }
+        //Path filePath = fileStorageLocation.resolve(uploadPath).normalize();
+        Path filePath = Paths.get(fileStorageLocation.toString() + "/" + uploadPath);
         
         try {
             Resource resource = new UrlResource(filePath.toUri());

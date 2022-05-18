@@ -8,7 +8,7 @@ import javax.transaction.Transactional;
 public interface PostFileService {
     Resource getDownloadFile(String fileName, Integer boardFileId);
 
-    Resource loadFileAsResource(String fileName);
+    Resource loadFileAsResource(String fileName, Integer boardFileId);
 
     String getFileName(Integer boardFileId);
 

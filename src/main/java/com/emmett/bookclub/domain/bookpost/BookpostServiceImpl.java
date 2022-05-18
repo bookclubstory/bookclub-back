@@ -41,11 +41,12 @@ public class BookpostServiceImpl implements BookpostService {
                                 String.valueOf(Optional.ofNullable(b[1]).orElse("")),//postId
                                 String.valueOf(Optional.ofNullable(b[2]).orElse("")),//title
                                 String.valueOf(Optional.ofNullable(b[3]).orElse("")),//rprsImage
-                                postFileService.getDownloadFileUri(String.valueOf(Optional.ofNullable(b[4]).orElse(""))), //fileName
-                                String.valueOf(Optional.ofNullable(b[5]).orElse("")),
-                                (LocalDateTime) (Optional.ofNullable(b[6]).orElse(LocalDateTime.now())),
-                                String.valueOf(Optional.ofNullable(b[7]).orElse("")),
-                                (LocalDateTime) (Optional.ofNullable(b[8]).orElse(LocalDateTime.now()))
+                                (int) b[4],//fileOrder
+                                postFileService.getDownloadFileUri(String.valueOf(Optional.ofNullable(b[5]).orElse(""))), //fileName
+                                String.valueOf(Optional.ofNullable(b[6]).orElse("")),
+                                (LocalDateTime) (Optional.ofNullable(b[7]).orElse(LocalDateTime.now())),
+                                String.valueOf(Optional.ofNullable(b[8]).orElse("")),
+                                (LocalDateTime) (Optional.ofNullable(b[9]).orElse(LocalDateTime.now()))
                         )
                 ).collect(Collectors.collectingAndThen(Collectors.toList(), result -> {
                     if (result.isEmpty()) throw new NotFoundException("해당 게시물이 존재하지 않습니다.");
@@ -64,12 +65,13 @@ public class BookpostServiceImpl implements BookpostService {
                                 (int) b[0],//boardId
                                 String.valueOf(Optional.ofNullable(b[1]).orElse("")),//postId
                                 String.valueOf(Optional.ofNullable(b[2]).orElse("")),//title
-                                String.valueOf(Optional.ofNullable(b[3]).orElse("")),//rprsImage
-                                postFileService.getDownloadFileUri(String.valueOf(Optional.ofNullable(b[4]).orElse(""))), //fileName
-                                String.valueOf(Optional.ofNullable(b[5]).orElse("")),
-                                (LocalDateTime) (Optional.ofNullable(b[6]).orElse(LocalDateTime.now())),
-                                String.valueOf(Optional.ofNullable(b[7]).orElse("")),
-                                (LocalDateTime) (Optional.ofNullable(b[8]).orElse(LocalDateTime.now()))
+                                String.valueOf(Optional.ofNullable(b[3]).orElse("")),//boardFileId
+                                (int) b[4],//fileOrder
+                                postFileService.getDownloadFileUri(String.valueOf(Optional.ofNullable(b[5]).orElse(""))), //fileName
+                                String.valueOf(Optional.ofNullable(b[6]).orElse("")),
+                                (LocalDateTime) (Optional.ofNullable(b[7]).orElse(LocalDateTime.now())),
+                                String.valueOf(Optional.ofNullable(b[8]).orElse("")),
+                                (LocalDateTime) (Optional.ofNullable(b[9]).orElse(LocalDateTime.now()))
                         )
                 ).collect(Collectors.collectingAndThen(Collectors.toList(), result -> {
                     if (result.isEmpty()) throw new NotFoundException("해당 게시물이 존재하지 않습니다.");
